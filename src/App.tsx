@@ -3,14 +3,38 @@ import logo from "./logo.svg";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState<number>(0);
+
+  const incrementCount = () => {
+    setCount(count + 1);
+  };
+
+  const handleBackgroundSync = () => {
+    // Trigger background sync here
+    if ("serviceWorker" in navigator && "SyncManager" in window) {
+      navigator.serviceWorker.ready
+        .then((registration) => {
+          return registration.sync.register("my-sync-tag");
+        })
+        .then(() => {
+          console.log("Background sync registered.");
+        })
+        .catch((err) => {
+          console.error("Background sync registration failed:", err);
+        });
+    } else {
+      console.error("Background sync is not supported.");
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>{count}</p>
-        <button onClick={() => setCount(count + 1)}>Add</button>
-        <button onClick={() => setCount(count - 1)}>Remove</button>
+        <h1>Background Sync Example</h1>
+        <p>Count: {count}</p>
+        <button onClick={incrementCount}>Increment Count</button>
+        <button onClick={handleBackgroundSync}>Trigger Background Sync</button>
       </header>
     </div>
   );

@@ -12,20 +12,25 @@ declare const self: ServiceWorkerGlobalScope;
 
 clientsClaim();
 
+const bgSyncQueueName = 'my-background-sync-queue';
+
 precacheAndRoute(self.__WB_MANIFEST);
 
 const fileExtensionRegexp = new RegExp('/[^/?]+\\.[^/]+$');
 registerRoute(
-  ({ request, url }: { request: Request; url: URL }) => {
+  ({ request, url }) => {
     if (request.mode !== 'navigate') {
       return false;
     }
+
     if (url.pathname.startsWith('/_')) {
       return false;
     }
+
     if (url.pathname.match(fileExtensionRegexp)) {
       return false;
     }
+
     return true;
   },
   createHandlerBoundToURL(process.env.PUBLIC_URL + '/index.html')
@@ -47,22 +52,27 @@ self.addEventListener('message', (event) => {
   }
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('/api/')) {
-    const bgSync = new BackgroundSyncPlugin('myQueueName', {
-      maxRetentionTime: 24 * 60, // Retry for max of 24 hours (in minutes)
-    });
+const bgSyncPlugin = new BackgroundSyncPlugin(bgSyncQueueName, {
+  maxRetentionTime: 24 * 60 // Retry for up to 24 hours
+});
 
-    const bgSyncRoute = new RegExp('https://api.example.com/sync');
+const bgSyncRoute = new RegExp(''); // Add your route here
 
-    if (event.request.method === 'POST' && event.request.url.match(bgSyncRoute)) {
-      const promiseChain = fetch(event.request.clone()).catch((err) => {
-        return self.registration.showNotification('Unable to sync', { // Corrected line
-          body: `Error syncing: ${err}`,
-        });
+self.addEventListener('fetch', (event : any) => {
+  if (event.request.method === 'POST' && bgSyncRoute.test(event.request.url)) {
+    const bgSync = new Promise((resolve, reject) => {
+      const bgSyncRequest = new Request(event.request.url, {
+        method: 'POST',
+        headers: event.request.headers,
+        body: event.request.body
       });
 
-      event.waitUntil(promiseChain);
-    }
+      const failureCallback = () => reject('Background sync failed');
+      const successCallback = () => resolve('Background sync successful');
+
+      fetch(bgSyncRequest).then(successCallback, failureCallback);
+    });
+
+    event.respondWith(bgSync);
   }
 });
