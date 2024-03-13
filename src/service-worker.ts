@@ -8,6 +8,18 @@
 // You can also remove this file if you'd prefer not to use a
 // service worker, and the Workbox build step will be skipped.
 
+self.addEventListener('sync', function(event : any)  {
+  if (event.tag === 'syncCount') {
+    event.waitUntil(syncCount());
+  }
+});
+
+function syncCount() {
+  // Example: Synchronize count data with server
+  console.log('Syncing count data with server...');
+  // Perform your data synchronization logic here
+}
+
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
@@ -76,17 +88,3 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
-
-// Any other custom service worker logic can go here.
-self.addEventListener('sync', function(event : any) {
-  if (event.tag === 'syncCount') {
-    event.waitUntil(syncCount());
-  }
-});
-
-function syncCount() {
-  // Example: Synchronize count data with server
-  console.log('Syncing count data with server...');
-  // Perform your data synchronization logic here
-}
-
