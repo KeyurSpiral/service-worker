@@ -9,6 +9,10 @@ function App() {
     setCount(count + 1);
   };
 
+  const decrementCount = () => {
+    setCount(count - 1);
+  };
+
   const handleBackgroundSync = () => {
     // Trigger background sync here
     if ("serviceWorker" in navigator && "SyncManager" in window) {
@@ -33,7 +37,8 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <h1>Background Sync Example</h1>
         <p>Count: {count}</p>
-        <button onClick={incrementCount}>Increment Count</button>
+        <button onClick={incrementCount}>Add</button>
+        <button onClick={decrementCount}>Remove</button>
         <button onClick={handleBackgroundSync}>Trigger Background Sync</button>
       </header>
     </div>
