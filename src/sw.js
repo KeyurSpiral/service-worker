@@ -1,60 +1,27 @@
 // src/sw.js
 
-const CACHE_NAME = 'my-app-cache-v1';
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.3.0/workbox-sw.js');
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll([
-        '/',
-        '/index.html',
-        '/manifest.json',
-        // Add more files to cache if needed
-      ]);
-    })
-  );
-});
+const { registerRoute } = workbox.routing;
+const { NetworkOnly } = workbox.strategies;
+const { Queue } = workbox.backgroundSync;
+
+const queue = new Queue('counterQueue');
 
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
+  if (event.request.url.includes('/increment') || event.request.url.includes('/decrement')) {
+    const bgSync = new NetworkOnly({ plugins: [{ fetchDidFail: async ({ request }) => { await queue.addRequest(request); } }] });
+    event.respondWith(bgSync.handle({ request: event.request }));
+  }
 });
 
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-counter') {
-    event.waitUntil(syncCounter());
+  if (event.tag === 'background-sync') {
+    event.waitUntil(queue.replayRequests());
   }
 });
 
-async function syncCounter() {
-  // Fetch counter data from local storage
-  const counterData = localStorage.getItem('counter');
-  
-  if (counterData) {
-    // Send counter data to the server
-    try {
-      const response = await fetch('https://example.com/api/updateCounter', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ counter: counterData }),
-      });
-
-      if (response.ok) {
-        console.log('Background sync: Counter data synced!');
-        // Clear counter data from local storage
-        localStorage.removeItem('counter');
-      } else {
-        console.error('Failed to sync counter data:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error syncing counter data:', error);
-    }
-  } else {
-    console.log('No counter data to sync.');
-  }
-}
+registerRoute(
+  ({ url }) => url.pathname.startsWith('/posts'),
+  new NetworkOnly()
+);
