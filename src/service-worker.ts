@@ -8,6 +8,14 @@
 // You can also remove this file if you'd prefer not to use a
 // service worker, and the Workbox build step will be skipped.
 
+import { clientsClaim } from 'workbox-core';
+import { ExpirationPlugin } from 'workbox-expiration';
+import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
+import { registerRoute } from 'workbox-routing';
+import { StaleWhileRevalidate } from 'workbox-strategies';
+
+declare const self: ServiceWorkerGlobalScope;
+
 self.addEventListener('sync', function(event : any)  {
   if (event.tag === 'syncCount') {
     event.waitUntil(syncCount());
@@ -20,13 +28,6 @@ function syncCount() {
   // Perform your data synchronization logic here
 }
 
-import { clientsClaim } from 'workbox-core';
-import { ExpirationPlugin } from 'workbox-expiration';
-import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
-import { StaleWhileRevalidate } from 'workbox-strategies';
-
-declare const self: ServiceWorkerGlobalScope;
 
 clientsClaim();
 
