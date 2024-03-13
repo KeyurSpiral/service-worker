@@ -18,6 +18,7 @@ declare const self: ServiceWorkerGlobalScope;
 
 self.addEventListener('sync', function(event : any)  {
   if (event.tag === 'syncCount') {
+    console.log("event.tag", event.tag)
     event.waitUntil(syncCount());
   }
 });
