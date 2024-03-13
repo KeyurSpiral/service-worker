@@ -16,18 +16,48 @@ import { StaleWhileRevalidate } from 'workbox-strategies';
 
 declare const self: ServiceWorkerGlobalScope;
 
-self.addEventListener('sync', function(event : any)  {
-  if (event.tag === 'syncCount') {
-    console.log("event.tag", event.tag)
-    event.waitUntil(syncCount());
+self.addEventListener('sync', (event : any) => {
+  console.log('Background Sync Triggered:', event.tag);
+  
+  if (event.tag === 'syncDataToServer') {
+    event.waitUntil(syncDataToServer());
   }
 });
 
-function syncCount() {
-  // Example: Synchronize count data with server
-  console.log('Syncing count data with server...');
-  // Perform your data synchronization logic here
+async function syncDataToServer() {
+  // Retrieve data from indexedDB or local storage
+  const data = await getDataToSync();
+
+  // Send data to the server using fetch API
+  try {
+    const response = await fetch('https://example.com/api/sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      console.log('Data synced successfully!');
+      // Optionally, update UI or clear data from local storage/indexedDB
+    } else {
+      console.error('Failed to sync data:', response.status);
+      // Optionally, handle the error or retry later
+    }
+  } catch (error) {
+    console.error('Error syncing data:', error);
+    // Optionally, handle the error or retry later
+  }
 }
+
+async function getDataToSync() {
+  // Implement logic to retrieve data from local storage/indexedDB
+  // For example:
+  const data : any = await localStorage.getItem('dataToSync');
+  return JSON.parse(data);
+}
+
 
 
 clientsClaim();

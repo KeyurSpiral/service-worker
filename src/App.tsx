@@ -8,19 +8,19 @@ function App() {
   const increment = () => {
     setCount(count + 1);
   };
-
+  
   const decrement = () => {
     setCount(count - 1);
   };
-
+  
   const handleSync = () => {
     if ("serviceWorker" in navigator && "SyncManager" in window) {
       navigator.serviceWorker.ready
-        .then(function (registration : any) {
-          return registration.sync.register("syncCount");
-        })
-        .catch(function (err) {
-          console.error("Unable to register sync: ", err);
+      .then(function (registration : any) {
+        return registration.sync.register("syncCount");
+      })
+      .catch(function (err) {
+        console.error("Unable to register sync: ", err);
         });
     } else {
       console.error("Background sync not supported");
