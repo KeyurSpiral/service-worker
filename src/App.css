@@ -24,8 +24,13 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.App-header p {
+  font-size: 50px;
+  margin: 20px;
+}
+
+.App-header button {
+  margin-top: 5px;
 }
 
 @keyframes App-logo-spin {
