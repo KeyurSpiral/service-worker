@@ -50,26 +50,27 @@ function App() {
       console.log('IndexedDB is not supported in this browser.');
       return;
     }
-
-    const request = window.indexedDB.open('countDB', 1);
-
+  
+    const request = window.indexedDB.open('countDB', 2); // Incrementing version number
+  
     request.onerror = function(event) {
       console.error('IndexedDB error:', event.target.error);
     };
-
+  
     request.onsuccess = function(event) {
       const db = event.target.result;
       const transaction = db.transaction(['countStore'], 'readwrite');
       const objectStore = transaction.objectStore('countStore');
-      objectStore.put(count, 1);
+      objectStore.put({ id: 1, count }); // Specify an object with id property as key
     };
-
+  
     request.onupgradeneeded = function(event) {
       const db = event.target.result;
-      const objectStore = db.createObjectStore('countStore', { keyPath: 'id' });
-      objectStore.add(count, 1);
+      const objectStore = db.createObjectStore('countStore', { keyPath: 'id', autoIncrement: true }); // Set keyPath and autoIncrement
+      objectStore.add({ id: 1, count }); // Specify an object with id property as key
     };
   };
+  
 
   return (
     <div className="App">
