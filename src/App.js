@@ -6,7 +6,7 @@ function App() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const storedCount = localStorage.getItem("count");
+    const storedCount = localStorage.getItem('count');
     if (storedCount) {
       setCount(parseInt(storedCount));
     } else {
@@ -19,7 +19,7 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         setCount(data.id);
-        localStorage.setItem("count", data.id);
+        saveCountToIndexedDB(data.id);
       });
   };
 
@@ -36,19 +36,39 @@ function App() {
   };
 
   const syncInBackground = () => {
-    if ("serviceWorker" in navigator && "SyncManager" in window) {
-      navigator.serviceWorker.ready
-        .then((registration) => {
-          return registration.sync.register("syncCount");
-        })
-        .catch((err) => {
-          console.error("Background sync registration failed:", err);
-        });
-    } else {
-      console.log(
-        "Service workers or background sync are not supported in this browser."
-      );
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready.then(registration => {
+        return registration.sync.register('syncCount');
+      }).catch(err => {
+        console.error('Background sync registration failed:', err);
+      });
     }
+  };
+
+  const saveCountToIndexedDB = (count) => {
+    if (!('indexedDB' in window)) {
+      console.log('IndexedDB is not supported in this browser.');
+      return;
+    }
+
+    const request = window.indexedDB.open('countDB', 1);
+
+    request.onerror = function(event) {
+      console.error('IndexedDB error:', event.target.error);
+    };
+
+    request.onsuccess = function(event) {
+      const db = event.target.result;
+      const transaction = db.transaction(['countStore'], 'readwrite');
+      const objectStore = transaction.objectStore('countStore');
+      objectStore.put(count, 1);
+    };
+
+    request.onupgradeneeded = function(event) {
+      const db = event.target.result;
+      const objectStore = db.createObjectStore('countStore', { keyPath: 'id' });
+      objectStore.add(count, 1);
+    };
   };
 
   return (
