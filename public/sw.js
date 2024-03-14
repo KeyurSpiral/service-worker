@@ -15,45 +15,11 @@ function syncCount() {
       return response.json();
     })
     .then(function(data) {
-      saveCountToIndexedDB(data.id);
+      localStorage.setItem('count', data.id);
     })
     .catch(function(error) {
       console.error('Background sync failed:', error);
     });
-}
-
-self.addEventListener('install', function(event) {
-  event.waitUntil(self.skipWaiting());
-});
-
-self.addEventListener('activate', function(event) {
-  event.waitUntil(self.clients.claim());
-});
-
-function saveCountToIndexedDB(count) {
-  if (!('indexedDB' in self)) {
-    console.log('IndexedDB is not supported in this browser.');
-    return;
-  }
-
-  const request = self.indexedDB.open('countDB', 1);
-
-  request.onerror = function(event) {
-    console.error('IndexedDB error:', event.target.error);
-  };
-
-  request.onsuccess = function(event) {
-    const db = event.target.result;
-    const transaction = db.transaction(['countStore'], 'readwrite');
-    const objectStore = transaction.objectStore('countStore');
-    objectStore.put(count, 1);
-  };
-
-  request.onupgradeneeded = function(event) {
-    const db = event.target.result;
-    const objectStore = db.createObjectStore('countStore', { keyPath: 'id' });
-    objectStore.add(count, 1);
-  };
 }
 
 self.addEventListener('install', function(event) {
