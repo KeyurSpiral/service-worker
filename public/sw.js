@@ -15,8 +15,9 @@ self.addEventListener('sync', function(event) {
         return response.json();
       })
       .then(function(data) {
-        return caches.open('count-store').then(function(cache) {
-          return cache.put('count', new Response(data.id.toString()));
+        self.registration.showNotification('Synced Successfully', {
+          body: 'Data synchronized successfully!',
+          icon: '/logo192.png',
         });
       })
       .catch(function(error) {
