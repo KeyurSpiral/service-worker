@@ -1,7 +1,9 @@
+// serviceWorkerRegistration.js
+
 const register = () => {
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/public/sw.js").then(
+      navigator.serviceWorker.register("/sw.js").then(
         (registration) => {
           console.log(
             "ServiceWorker registration successful with scope: ",
