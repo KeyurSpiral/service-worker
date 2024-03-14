@@ -1,42 +1,51 @@
+// App.js
+import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { useEffect, useState } from "react";
 
 function App() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    // Fetch initial count from fake API
+    const storedCount = localStorage.getItem('count');
+    if (storedCount) {
+      setCount(parseInt(storedCount));
+    } else {
+      fetchCount();
+    }
+  }, []);
+
+  const fetchCount = () => {
     fetch("https://jsonplaceholder.typicode.com/posts/1")
       .then((response) => response.json())
-      .then((data) => setCount(data.id));
-  }, []);
+      .then((data) => {
+        setCount(data.id);
+        localStorage.setItem('count', data.id);
+      });
+  };
 
   const increment = () => {
     setCount((prevCount) => prevCount + 1);
-    // Update fake API with new count
-    fetch("https://jsonplaceholder.typicode.com/posts/1", {
-      method: "PUT",
-      body: JSON.stringify({ id: count + 1 }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    });
+    syncInBackground();
   };
 
   const decrement = () => {
     if (count > 0) {
       setCount((prevCount) => prevCount - 1);
-      // Update fake API with new count
-      fetch("https://jsonplaceholder.typicode.com/posts/1", {
-        method: "PUT",
-        body: JSON.stringify({ id: count - 1 }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
+      syncInBackground();
+    }
+  };
+
+  const syncInBackground = () => {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready.then(registration => {
+        return registration.sync.register('syncCount');
+      }).catch(err => {
+        console.error('Background sync registration failed:', err);
       });
     }
   };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -48,4 +57,5 @@ function App() {
     </div>
   );
 }
+
 export default App;
