@@ -1,16 +1,17 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import { registerServiceWorker } from "./serviceWorkerRegistration";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import reportWebVitals from './reportWebVitals';
 
-import reportWebVitals from "./reportWebVitals";
-
-createRoot(document.getElementById("root")).render(
+ReactDOM.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
+  document.getElementById('root')
 );
-registerServiceWorker();
+
+serviceWorkerRegistration.register();
 
 reportWebVitals();
