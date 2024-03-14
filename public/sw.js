@@ -15,7 +15,9 @@ self.addEventListener('sync', function(event) {
         return response.json();
       })
       .then(function(data) {
-        localStorage.setItem('count', data.id);
+        return caches.open('count-store').then(function(cache) {
+          return cache.put('count', new Response(data.id.toString()));
+        });
       })
       .catch(function(error) {
         console.error('Background sync failed:', error);
