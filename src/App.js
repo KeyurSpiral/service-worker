@@ -1,3 +1,5 @@
+// App.js
+
 import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState } from "react";
@@ -6,37 +8,40 @@ function App() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    // Fetch initial count from fake API
+    fetchCount();
+  }, []);
+
+  const fetchCount = () => {
     fetch("https://jsonplaceholder.typicode.com/posts/1")
       .then((response) => response.json())
-      .then((data) => setCount(data.id));
-  }, []);
+      .then((data) => setCount(data.id))
+      .catch((error) => console.error("Error fetching count:", error));
+  };
 
   const increment = () => {
     setCount((prevCount) => prevCount + 1);
-    // Update fake API with new count
-    fetch("https://jsonplaceholder.typicode.com/posts/1", {
-      method: "PUT",
-      body: JSON.stringify({ id: count + 1 }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    });
+    registerBackgroundSync();
   };
 
   const decrement = () => {
     if (count > 0) {
       setCount((prevCount) => prevCount - 1);
-      // Update fake API with new count
-      fetch("https://jsonplaceholder.typicode.com/posts/1", {
-        method: "PUT",
-        body: JSON.stringify({ id: count - 1 }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      });
+      registerBackgroundSync();
     }
   };
+
+  const registerBackgroundSync = () => {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready
+        .then(function(registration) {
+          return registration.sync.register('syncCount');
+        })
+        .catch(function(err) {
+          console.log('Background sync registration failed:', err);
+        });
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
