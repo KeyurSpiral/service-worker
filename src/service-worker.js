@@ -3,7 +3,7 @@ import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { StaleWhileRevalidate, NetworkFirst } from "workbox-strategies";
+import { StaleWhileRevalidate } from "workbox-strategies";
 import { BackgroundSyncPlugin } from 'workbox-background-sync'; // Import BackgroundSyncPlugin
 
 clientsClaim();
@@ -42,11 +42,21 @@ const bgSyncPlugin = new BackgroundSyncPlugin('myQueueName', {
 });
 registerRoute(
   'https://jsonplaceholder.typicode.com/posts/1', // Adjust the URL as per your needs
-  new NetworkFirst({
-    cacheName: 'api-cache',
+  new StaleWhileRevalidate({
     plugins: [bgSyncPlugin],
   }),
-  'GET' // Specify the HTTP method you want to retry
+  'POST' // Specify the HTTP method you want to retry
+);
+
+// Cache external resources for offline use
+registerRoute(
+  ({ url }) => url.origin === 'https://jsonplaceholder.typicode.com',
+  new StaleWhileRevalidate()
+);
+
+registerRoute(
+  ({ url }) => url.origin === 'https://service-worker-keyur.vercel.app',
+  new StaleWhileRevalidate()
 );
 
 self.addEventListener("message", (event) => {
