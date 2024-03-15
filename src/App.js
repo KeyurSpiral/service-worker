@@ -1,4 +1,3 @@
-// App.js
 import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
@@ -7,7 +6,7 @@ function App() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const storedCount = localStorage.getItem('count');
+    const storedCount = localStorage.getItem("count");
     if (storedCount) {
       setCount(parseInt(storedCount));
     } else {
@@ -20,7 +19,7 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         setCount(data.id);
-        localStorage.setItem('count', data.id);
+        localStorage.setItem("count", data.id);
       });
   };
 
@@ -37,12 +36,14 @@ function App() {
   };
 
   const syncInBackground = () => {
-    if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      navigator.serviceWorker.ready.then(registration => {
-        return registration.sync.register('syncCount');
-      }).catch(err => {
-        console.error('Background sync registration failed:', err);
-      });
+    if ("serviceWorker" in navigator && "SyncManager" in window) {
+      navigator.serviceWorker.ready
+        .then((registration) => {
+          return registration.sync.register("syncCount");
+        })
+        .catch((err) => {
+          console.error("Background sync registration failed:", err);
+        });
     }
   };
 

@@ -1,5 +1,3 @@
-// serviceWorkerRegistration.js
-
 const register = () => {
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
