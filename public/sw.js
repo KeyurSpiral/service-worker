@@ -1,4 +1,15 @@
-// sw.js
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    caches.open('myCache').then(function(cache) {
+      return cache.match(event.request).then(function(response) {
+        return response || fetch(event.request).then(function(response) {
+          cache.put(event.request, response.clone());
+          return response;
+        });
+      });
+    })
+  );
+});
 
 self.addEventListener('sync', function(event) {
   if (event.tag === 'syncCount') {
@@ -23,7 +34,21 @@ function syncCount() {
 }
 
 self.addEventListener('install', function(event) {
-  event.waitUntil(self.skipWaiting());
+  event.waitUntil(
+    caches.open('myCache').then(function(cache) {
+      return cache.addAll([
+        '/',
+        '/index.html',
+        '/logo.svg',
+        '/App.css',
+        '/App.js',
+        '/index.js',
+        '/serviceWorkerRegistration.js',
+        '/reportWebVitals.js'
+        // Add other assets you want to cache for offline use
+      ]);
+    })
+  );
 });
 
 self.addEventListener('activate', function(event) {

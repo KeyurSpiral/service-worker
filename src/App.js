@@ -4,6 +4,7 @@ import "./App.css";
 
 function App() {
   const [count, setCount] = useState(0);
+  const [online, setOnline] = useState(navigator.onLine);
 
   useEffect(() => {
     const storedCount = localStorage.getItem("count");
@@ -12,7 +13,19 @@ function App() {
     } else {
       fetchCount();
     }
+
+    window.addEventListener('online', handleNetworkChange);
+    window.addEventListener('offline', handleNetworkChange);
+
+    return () => {
+      window.removeEventListener('online', handleNetworkChange);
+      window.removeEventListener('offline', handleNetworkChange);
+    };
   }, []);
+
+  const handleNetworkChange = () => {
+    setOnline(navigator.onLine);
+  };
 
   const fetchCount = () => {
     fetch("https://jsonplaceholder.typicode.com/posts/1")
@@ -25,13 +38,17 @@ function App() {
 
   const increment = () => {
     setCount((prevCount) => prevCount + 1);
-    syncInBackground();
+    if (online) {
+      syncInBackground();
+    }
   };
 
   const decrement = () => {
     if (count > 0) {
       setCount((prevCount) => prevCount - 1);
-      syncInBackground();
+      if (online) {
+        syncInBackground();
+      }
     }
   };
 
@@ -51,9 +68,15 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <button onClick={decrement}>Decrement</button>
-        <span>{count}</span>
-        <button onClick={increment}>Increment</button>
+        {online ? (
+          <>
+            <button onClick={decrement}>Decrement</button>
+            <span>{count}</span>
+            <button onClick={increment}>Increment</button>
+          </>
+        ) : (
+          <p>Offline: Counts may not update until you are back online.</p>
+        )}
       </header>
     </div>
   );
