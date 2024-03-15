@@ -1,3 +1,4 @@
+// src/App.js
 import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState } from "react";
@@ -21,31 +22,51 @@ function App() {
 
   const increment = () => {
     setCount((prevCount) => prevCount + 1);
-    // Update fake API with new count
-    fetch("https://jsonplaceholder.typicode.com/posts/1", {
-      method: "POST", // Change the method to POST for background sync
-      body: JSON.stringify({ id: count + 1 }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    });
+    // Check if online before making network request
+    if (navigator.onLine) {
+      // Update fake API with new count
+      fetch("https://jsonplaceholder.typicode.com/posts/1", {
+        method: "PUT",
+        body: JSON.stringify({ id: count + 1 }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      }).catch((error) => {
+        // Handle error and queue background sync task
+        console.error("Failed to update count:", error);
+        queueSync();
+      });
+    } else {
+      // Queue background sync task when offline
+      queueSync();
+    }
   };
 
   const decrement = () => {
     if (count > 0) {
       setCount((prevCount) => prevCount - 1);
-      // Update fake API with new count
-      fetch("https://jsonplaceholder.typicode.com/posts/1", {
-        method: "POST", // Change the method to POST for background sync
-        body: JSON.stringify({ id: count - 1 }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      });
+      // Check if online before making network request
+      if (navigator.onLine) {
+        // Update fake API with new count
+        fetch("https://jsonplaceholder.typicode.com/posts/1", {
+          method: "PUT",
+          body: JSON.stringify({ id: count - 1 }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        }).catch((error) => {
+          // Handle error and queue background sync task
+          console.error("Failed to update count:", error);
+          queueSync();
+        });
+      } else {
+        // Queue background sync task when offline
+        queueSync();
+      }
     }
   };
 
-  const syncData = () => {
+  const queueSync = () => {
     if ('SyncManager' in window) {
       navigator.serviceWorker.ready
         .then(function(reg) {
@@ -66,7 +87,6 @@ function App() {
         <button onClick={decrement}>Decrement</button>
         <span>{error ? "Error: " + error : count}</span>
         <button onClick={increment}>Increment</button>
-        <button onClick={syncData}>Sync Data</button> {/* Button to trigger background sync */}
       </header>
     </div>
   );
