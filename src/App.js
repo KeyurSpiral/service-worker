@@ -1,69 +1,62 @@
-// src/app.js
+// src/App.js
 import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState } from "react";
 
 function App() {
   const [count, setCount] = useState(0);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Fetch initial count from fake API
     fetch("https://jsonplaceholder.typicode.com/posts/1")
-      .then((response) => response.json())
-      .then((data) => setCount(data.id));
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Service Unavailable");
+        }
+        return response.json();
+      })
+      .then((data) => setCount(data.id))
+      .catch((error) => setError(error.message));
   }, []);
 
   const increment = () => {
     setCount((prevCount) => prevCount + 1);
-    updateCount(count + 1);
+    // Update fake API with new count
+    fetch("https://jsonplaceholder.typicode.com/posts/1", {
+      method: "PUT",
+      body: JSON.stringify({ id: count + 1 }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
   };
 
   const decrement = () => {
     if (count > 0) {
       setCount((prevCount) => prevCount - 1);
-      updateCount(count - 1);
-    }
-  };
-
-  const updateCount = (newCount) => {
-    if (navigator.onLine) {
+      // Update fake API with new count
       fetch("https://jsonplaceholder.typicode.com/posts/1", {
         method: "PUT",
-        body: JSON.stringify({ id: newCount }),
+        body: JSON.stringify({ id: count - 1 }),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
+      });
+    }
+  };
+
+  const syncData = () => {
+    if ('SyncManager' in window) {
+      navigator.serviceWorker.ready
+        .then(function(reg) {
+          return reg.sync.register('myQueueName');
         })
-        .then((data) => console.log("Updated count:", data.id))
-        .catch((error) => {
-          console.error("Error updating count:", error);
-          // Queue failed request for background sync
-          if ("serviceWorker" in navigator && "SyncManager" in window) {
-            navigator.serviceWorker.ready
-              .then((swRegistration) => {
-                return swRegistration.sync.register("syncCountUpdate");
-              })
-              .catch((err) =>
-                console.error("Service Worker registration failed:", err)
-              );
-          }
+        .catch(function(err) {
+          console.log('Sync registration failed:', err);
         });
     } else {
-      // Queue failed request for background sync
-      if ("serviceWorker" in navigator && "SyncManager" in window) {
-        navigator.serviceWorker.ready
-          .then((swRegistration) => {
-            return swRegistration.sync.register("syncCountUpdate");
-          })
-          .catch((err) =>
-            console.error("Service Worker registration failed:", err)
-          );
-      }
+      console.log('Background Sync is not supported.');
     }
   };
 
@@ -72,10 +65,12 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <button onClick={decrement}>Decrement</button>
-        <span>{count}</span>
+        <span>{error ? "Error: " + error : count}</span>
         <button onClick={increment}>Increment</button>
+        <button onClick={syncData}>Sync Data</button> {/* Button to trigger background sync */}
       </header>
     </div>
   );
 }
+
 export default App;
