@@ -3,8 +3,8 @@ import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { StaleWhileRevalidate } from "workbox-strategies";
-import { BackgroundSyncPlugin } from 'workbox-background-sync';
+import { NetworkFirst, StaleWhileRevalidate } from "workbox-strategies";
+import { BackgroundSyncPlugin } from 'workbox-background-sync'; // Import BackgroundSyncPlugin
 
 clientsClaim();
 
@@ -41,11 +41,11 @@ const bgSyncPlugin = new BackgroundSyncPlugin('myQueueName', {
   maxRetentionTime: 24 * 60, // Retry for max of 24 hours (in minutes)
 });
 registerRoute(
-  'https://jsonplaceholder.typicode.com/posts/1',
-  new StaleWhileRevalidate({
+  'https://jsonplaceholder.typicode.com/posts/1', // Adjust the URL as per your needs
+  new NetworkFirst({
     plugins: [bgSyncPlugin],
   }),
-  'POST'
+  'POST' // Specify the HTTP method you want to retry
 );
 
 self.addEventListener("message", (event) => {

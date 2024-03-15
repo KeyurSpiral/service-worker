@@ -11,54 +11,37 @@ function App() {
     fetch("https://jsonplaceholder.typicode.com/posts/1")
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Failed to fetch data");
+          throw new Error("Service Unavailable");
         }
         return response.json();
       })
       .then((data) => setCount(data.id))
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setError(error.message);
-      });
+      .catch((error) => setError(error.message));
   }, []);
 
   const increment = () => {
     setCount((prevCount) => prevCount + 1);
     // Update fake API with new count
-    if (navigator.onLine) {
-      fetch("https://jsonplaceholder.typicode.com/posts/1", {
-        method: "PUT",
-        body: JSON.stringify({ id: count + 1 }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      }).catch((error) => {
-        console.error("Error updating data:", error);
-        setError("Failed to update data");
-      });
-    } else {
-      setError("No internet connection. Data update will be retried later.");
-    }
+    fetch("https://jsonplaceholder.typicode.com/posts/1", {
+      method: "POST", // Change the method to POST for background sync
+      body: JSON.stringify({ id: count + 1 }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
   };
 
   const decrement = () => {
     if (count > 0) {
       setCount((prevCount) => prevCount - 1);
       // Update fake API with new count
-      if (navigator.onLine) {
-        fetch("https://jsonplaceholder.typicode.com/posts/1", {
-          method: "PUT",
-          body: JSON.stringify({ id: count - 1 }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        }).catch((error) => {
-          console.error("Error updating data:", error);
-          setError("Failed to update data");
-        });
-      } else {
-        setError("No internet connection. Data update will be retried later.");
-      }
+      fetch("https://jsonplaceholder.typicode.com/posts/1", {
+        method: "POST", // Change the method to POST for background sync
+        body: JSON.stringify({ id: count - 1 }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      });
     }
   };
 
