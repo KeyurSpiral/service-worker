@@ -1,10 +1,9 @@
-// src/service-worker.js
 /* eslint-disable */
 import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
-import { StaleWhileRevalidate } from "workbox-strategies";
+import { StaleWhileRevalidate, NetworkFirst } from "workbox-strategies";
 import { BackgroundSyncPlugin } from 'workbox-background-sync'; // Import BackgroundSyncPlugin
 
 clientsClaim();
@@ -43,10 +42,11 @@ const bgSyncPlugin = new BackgroundSyncPlugin('myQueueName', {
 });
 registerRoute(
   'https://jsonplaceholder.typicode.com/posts/1', // Adjust the URL as per your needs
-  new StaleWhileRevalidate({
+  new NetworkFirst({
+    cacheName: 'api-cache',
     plugins: [bgSyncPlugin],
   }),
-  'POST' // Specify the HTTP method you want to retry
+  'GET' // Specify the HTTP method you want to retry
 );
 
 self.addEventListener("message", (event) => {
