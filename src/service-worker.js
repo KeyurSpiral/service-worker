@@ -48,16 +48,12 @@ registerRoute(
   'POST' // Specify the HTTP method you want to retry
 );
 
-// Cache external resources for offline use
-registerRoute(
-  ({ url }) => url.origin === 'https://jsonplaceholder.typicode.com',
-  new StaleWhileRevalidate()
-);
-
-registerRoute(
-  ({ url }) => url.origin === 'https://service-worker-keyur.vercel.app',
-  new StaleWhileRevalidate()
-);
+// Catch errors when fetching external resources and respond with a custom offline response
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request).catch(() => new Response(null, { status: 503 }))
+  );
+});
 
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
