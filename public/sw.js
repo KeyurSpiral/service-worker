@@ -1,13 +1,33 @@
+// sw.js
+
+const CACHE_NAME = 'counter-app-cache-v1';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/static/js/main.chunk.js',
+  '/static/js/0.chunk.js',
+  '/static/js/bundle.js',
+  'https://jsonplaceholder.typicode.com/posts/1'
+];
+
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function(cache) {
+        return cache.addAll(urlsToCache);
+      })
+  );
+});
+
 self.addEventListener('fetch', function(event) {
   event.respondWith(
-    caches.open('myCache').then(function(cache) {
-      return cache.match(event.request).then(function(response) {
-        return response || fetch(event.request).then(function(response) {
-          cache.put(event.request, response.clone());
+    caches.match(event.request)
+      .then(function(response) {
+        if (response) {
           return response;
-        });
-      });
-    })
+        }
+        return fetch(event.request);
+      })
   );
 });
 
@@ -33,24 +53,16 @@ function syncCount() {
     });
 }
 
-self.addEventListener('install', function(event) {
+self.addEventListener('activate', function(event) {
   event.waitUntil(
-    caches.open('myCache').then(function(cache) {
-      return cache.addAll([
-        '/',
-        '/index.html',
-        '/logo.svg',
-        '/App.css',
-        '/App.js',
-        '/index.js',
-        '/serviceWorkerRegistration.js',
-        '/reportWebVitals.js'
-        // Add other assets you want to cache for offline use
-      ]);
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.filter(function(cacheName) {
+          return cacheName !== CACHE_NAME;
+        }).map(function(cacheName) {
+          return caches.delete(cacheName);
+        })
+      );
     })
   );
-});
-
-self.addEventListener('activate', function(event) {
-  event.waitUntil(self.clients.claim());
 });

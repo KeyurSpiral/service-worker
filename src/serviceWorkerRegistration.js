@@ -1,17 +1,16 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "./index.css";
-import App from "./App";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-import reportWebVitals from "./reportWebVitals";
+// serviceWorkerRegistration.js
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById("root")
-);
-
-serviceWorkerRegistration.register();
-
-reportWebVitals();
+export function register() {
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((registration) => {
+          console.log("Service worker registered: ", registration);
+        })
+        .catch((registrationError) => {
+          console.error("Service worker registration failed: ", registrationError);
+        });
+    });
+  }
+}
