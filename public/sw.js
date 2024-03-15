@@ -14,7 +14,9 @@ self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(function(cache) {
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache)
+          .then(() => console.log('Resources cached successfully'))
+          .catch((error) => console.error('Failed to cache resources:', error));
       })
   );
 });
@@ -52,4 +54,3 @@ function syncCount() {
       console.error('Background sync failed:', error);
     });
 }
-  
