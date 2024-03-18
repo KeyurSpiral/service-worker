@@ -22,28 +22,28 @@ function App() {
     // Open a connection to IndexedDB
     const request = window.indexedDB.open("myDatabase", 1);
 
-    request.onerror = function(event) {
+    request.onerror = function (event) {
       console.log("IndexedDB error:", event.target.error);
     };
 
-    request.onsuccess = function(event) {
+    request.onsuccess = function (event) {
       const db = event.target.result;
       const transaction = db.transaction("counts", "readonly");
       const objectStore = transaction.objectStore("counts");
       const getRequest = objectStore.get("count");
 
-      getRequest.onerror = function(event) {
+      getRequest.onerror = function (event) {
         console.log("Error loading count from IndexedDB:", event.target.error);
       };
 
-      getRequest.onsuccess = function(event) {
+      getRequest.onsuccess = function (event) {
         if (getRequest.result) {
           setCount(getRequest.result.value);
         }
       };
     };
 
-    request.onupgradeneeded = function(event) {
+    request.onupgradeneeded = function (event) {
       const db = event.target.result;
       const objectStore = db.createObjectStore("counts", { keyPath: "id" });
       objectStore.add({ id: "count", value: 0 });
@@ -76,17 +76,17 @@ function App() {
     // Open a connection to IndexedDB
     const request = window.indexedDB.open("myDatabase", 1);
 
-    request.onerror = function(event) {
+    request.onerror = function (event) {
       console.log("IndexedDB error:", event.target.error);
     };
 
-    request.onsuccess = function(event) {
+    request.onsuccess = function (event) {
       const db = event.target.result;
       const transaction = db.transaction("counts", "readwrite");
       const objectStore = transaction.objectStore("counts");
       const putRequest = objectStore.put({ id: "count", value: newCount });
 
-      putRequest.onerror = function(event) {
+      putRequest.onerror = function (event) {
         console.log("Error updating count in IndexedDB:", event.target.error);
       };
     };
@@ -117,16 +117,16 @@ function App() {
   };
 
   const queueSync = () => {
-    if ('SyncManager' in window) {
+    if ("SyncManager" in window) {
       navigator.serviceWorker.ready
-        .then(function(reg) {
-          return reg.sync.register('myQueueName');
+        .then(function (reg) {
+          return reg.sync.register("myQueueName");
         })
-        .catch(function(err) {
-          console.log('Sync registration failed:', err);
+        .catch(function (err) {
+          console.log("Sync registration failed:", err);
         });
     } else {
-      console.log('Background Sync is not supported.');
+      console.log("Background Sync is not supported.");
     }
   };
 
