@@ -147,6 +147,7 @@ function App() {
       }
     } else if (notificationPermission === "denied") {
       console.error("Permission for notifications was denied");
+      showNotificationPermissionDeniedMessage();
     } else {
       Notification.requestPermission().then((permission) => {
         setNotificationPermission(permission);
@@ -158,6 +159,13 @@ function App() {
         }
       });
     }
+  };
+
+  const showNotificationPermissionDeniedMessage = () => {
+    // You can display a message or a button here to direct users to enable notifications in their browser settings
+    alert(
+      "Permission for notifications was denied. Please enable notifications in your browser settings to receive notifications."
+    );
   };
 
   return (
