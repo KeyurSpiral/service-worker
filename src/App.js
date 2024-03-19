@@ -130,25 +130,29 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    if ("Notification" in window) {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          console.log("Notification permission granted");
-        }
-      });
-    }
-  }, []);
+  const [notificationPermission, setNotificationPermission] = useState(
+    Notification.permission
+  );
 
   const handlePushNotification = () => {
-    if ("serviceWorker" in navigator && "PushManager" in window) {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          navigator.serviceWorker.ready.then((registration) => {
-            registration.showNotification("New Message", {
-              body: "You have a new message!",
-            });
+    if (notificationPermission === "granted") {
+      if ("serviceWorker" in navigator && "PushManager" in window) {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.showNotification("New Message", {
+            body: "You have a new message!",
+            icon: "/icon.png",
+            badge: "/badge.png",
           });
+        });
+      }
+    } else if (notificationPermission === "denied") {
+      console.error("Permission for notifications was denied");
+    } else {
+      Notification.requestPermission().then((permission) => {
+        setNotificationPermission(permission);
+        if (permission === "granted") {
+          // Permission granted, proceed to show notification
+          handlePushNotification();
         } else {
           console.error("Permission for notifications was denied");
         }
