@@ -142,11 +142,16 @@ function App() {
 
   const handlePushNotification = () => {
     if ("serviceWorker" in navigator && "PushManager" in window) {
-      console.log("PUSH")
-      navigator.serviceWorker.ready.then((registration) => {
-        registration?.showNotification("Hello!", {
-          body: "You have a new message!",
-        });
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          navigator.serviceWorker.ready.then((registration) => {
+            registration.showNotification("New Message", {
+              body: "You have a new message!",
+            });
+          });
+        } else {
+          console.error("Permission for notifications was denied");
+        }
       });
     }
   };
