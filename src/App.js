@@ -130,6 +130,27 @@ function App() {
     }
   };
 
+  // useEffect(() => {
+  //   if ("Notification" in window) {
+  //     Notification.requestPermission().then((permission) => {
+  //       if (permission === "granted") {
+  //         console.log("Notification permission granted");
+  //       }
+  //     });
+  //   }
+  // }, []);
+
+  const handlePushNotification = () => {
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      console.log("PUSH")
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification("New Message", {
+          body: "You have a new message!",
+        });
+      });
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -137,6 +158,11 @@ function App() {
         <button onClick={decrement}>Decrement</button>
         <span>{error ? "Error: " + error : count}</span>
         <button onClick={increment}>Increment</button>
+
+        <div>
+          <h1>React Push Notification Example</h1>
+          <button onClick={handlePushNotification}>Send Notification</button>
+        </div>
       </header>
     </div>
   );

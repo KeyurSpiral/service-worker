@@ -4,7 +4,7 @@ import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import { NetworkFirst, StaleWhileRevalidate } from "workbox-strategies";
-import { BackgroundSyncPlugin } from 'workbox-background-sync'; // Import BackgroundSyncPlugin
+import { BackgroundSyncPlugin } from "workbox-background-sync"; // Import BackgroundSyncPlugin
 
 clientsClaim();
 
@@ -37,19 +37,33 @@ registerRoute(
 );
 
 // Register background sync for the desired route
-const bgSyncPlugin = new BackgroundSyncPlugin('myQueueName', {
+const bgSyncPlugin = new BackgroundSyncPlugin("myQueueName", {
   maxRetentionTime: 24 * 60, // Retry for max of 24 hours (in minutes)
 });
 registerRoute(
-  'https://jsonplaceholder.typicode.com/posts/1', // Adjust the URL as per your needs
+  "https://jsonplaceholder.typicode.com/posts/1", // Adjust the URL as per your needs
   new NetworkFirst({
     plugins: [bgSyncPlugin],
   }),
-  'POST' // Specify the HTTP method you want to retry
+  "POST" // Specify the HTTP method you want to retry
 );
 
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
+});
+
+// handle push notification
+
+self.addEventListener("push", function (event) {
+  const options = {
+    body: event.data.text(),
+    icon: "/public/logo192.png",
+    badge: "/public/logo192.png",
+  };
+
+  event.waitUntil(
+    self.registration.showNotification("Push Notification", options)
+  );
 });
