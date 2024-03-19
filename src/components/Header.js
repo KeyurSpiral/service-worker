@@ -12,7 +12,7 @@ const Header = () => {
           <Link to="/">React-Bootstrap</Link>
           <Link to="/">Home</Link>
           <Link to="/push">Push Notification</Link>
-          <Link to="/screen-2">Screen 2</Link>
+          <Link to="/location">Location Access</Link>
           <Link to="/screen-3">Screen 3</Link>
         </Container>
       </Navbar>

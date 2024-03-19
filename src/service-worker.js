@@ -55,7 +55,6 @@ self.addEventListener("message", (event) => {
 });
 
 // handle push notification
-
 self.addEventListener("push", function (event) {
   const options = {
     body: event.data.text(),
@@ -66,4 +65,23 @@ self.addEventListener("push", function (event) {
   event.waitUntil(
     self.registration.showNotification("Push Notification", options)
   );
+});
+
+//handle location access
+self.addEventListener("message", (event) => {
+  if (event.data === "getLocation") {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: "location", latitude, longitude });
+          });
+        });
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+      }
+    );
+  }
 });

@@ -4,8 +4,8 @@ import "./App.css";
 import Header from "./components/Header";
 import Home from "./screens/Home";
 import Push from "./screens/Push";
-import Screen2 from "./screens/Screen2";
 import Screen3 from "./screens/Screen3";
+import Location from "./screens/Location";
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/push" element={<Push />} />
-        <Route path="/screen-2" element={<Screen2 />} />
+        <Route path="/location" element={<Location />} />
         <Route path="/screen-3" element={<Screen3 />} />
       </Routes>
     </>
