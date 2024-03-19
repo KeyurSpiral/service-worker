@@ -130,21 +130,21 @@ function App() {
     }
   };
 
-  // useEffect(() => {
-  //   if ("Notification" in window) {
-  //     Notification.requestPermission().then((permission) => {
-  //       if (permission === "granted") {
-  //         console.log("Notification permission granted");
-  //       }
-  //     });
-  //   }
-  // }, []);
+  useEffect(() => {
+    if ("Notification" in window) {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          console.log("Notification permission granted");
+        }
+      });
+    }
+  }, []);
 
   const handlePushNotification = () => {
     if ("serviceWorker" in navigator && "PushManager" in window) {
       console.log("PUSH")
       navigator.serviceWorker.ready.then((registration) => {
-        registration.showNotification("New Message", {
+        registration?.showNotification("Hello!", {
           body: "You have a new message!",
         });
       });
