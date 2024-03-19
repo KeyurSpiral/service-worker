@@ -4,8 +4,10 @@ const Location = () => {
   const [location, setLocation] = useState(null);
 
   const handleGetLocation = () => {
-    if ("serviceWorker" in navigator) {
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage("getLocation");
+    } else {
+      console.error("Service worker is not available");
     }
   };
 
@@ -20,11 +22,12 @@ const Location = () => {
       }
     };
 
-    navigator.serviceWorker.addEventListener("message", handleMessage);
-
-    return () => {
-      navigator.serviceWorker.removeEventListener("message", handleMessage);
-    };
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.addEventListener("message", handleMessage);
+      return () => {
+        navigator.serviceWorker.removeEventListener("message", handleMessage);
+      };
+    }
   }, []);
 
   return (

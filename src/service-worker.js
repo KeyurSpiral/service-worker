@@ -69,7 +69,7 @@ self.addEventListener("push", function (event) {
 
 //handle location access
 self.addEventListener("message", (event) => {
-  if (event.data === "getLocation") {
+  if (event.data === "getLocation" && "geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -83,5 +83,7 @@ self.addEventListener("message", (event) => {
         console.error("Error getting location:", error);
       }
     );
+  } else {
+    console.error("Geolocation is not supported or permission is denied");
   }
 });
