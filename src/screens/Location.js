@@ -5,7 +5,7 @@ const Location = () => {
   const [error, setError] = useState(null);
 
   const handleGetLocation = () => {
-    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+    if ("serviceWorker" in navigator) {
       navigator.serviceWorker.controller.postMessage("getLocation");
     } else {
       console.error("Service worker is not available");
