@@ -10,7 +10,7 @@ import Location from "./screens/Location";
 function App() {
   setInterval(() => {
     console.log("App")
-  }, 1000);
+  }, 60 * 1000);
 
   return (
     <>
