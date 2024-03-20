@@ -10,6 +10,8 @@ clientsClaim();
 
 precacheAndRoute(self.__WB_MANIFEST);
 
+const VERSION = process.env.REACT_APP_VERSION;
+
 const fileExtensionRegexp = new RegExp("/[^/?]+\\.[^/]+$");
 registerRoute(({ request, url }) => {
   if (request.mode !== "navigate") {
@@ -94,3 +96,19 @@ self.addEventListener("push", function (event) {
     self.registration.showNotification("Push Notification", options)
   );
 });
+
+// Check for updates based on version in .env
+setInterval(() => {
+  const envVersion = process.env.REACT_APP_VERSION;
+  if (envVersion && envVersion !== VERSION) {
+    // Notify clients of the new version
+    self.clients.matchAll().then((clients) => {
+      clients.forEach((client) => {
+        client.postMessage({
+          type: "NEW_VERSION_AVAILABLE",
+          version: envVersion,
+        });
+      });
+    });
+  }
+}, 5000); // Check for updates every hour (60 * 60 * 1000)

@@ -13,6 +13,18 @@ root.render(
   </BrowserRouter>
 );
 
-serviceWorkerRegistration.register();
+serviceWorkerRegistration.register({
+  onUpdate: (registration) => {
+    const waitingServiceWorker = registration.waiting;
+    if (waitingServiceWorker) {
+      waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
+      waitingServiceWorker.addEventListener("statechange", (event) => {
+        if (event.target.state === "activated") {
+          window.location.reload();
+        }
+      });
+    }
+  },
+});
 
 reportWebVitals();
