@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 
 const Location = () => {
   const [location, setLocation] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleGetLocation = () => {
-    console.log("navigator", navigator);
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.controller.postMessage("getLocation");
     }
@@ -17,6 +17,8 @@ const Location = () => {
           latitude: event.data.latitude,
           longitude: event.data.longitude,
         });
+      } else if (event.data.type === "location_error") {
+        setError("Geolocation is not available or permission is denied.");
       }
     };
 
