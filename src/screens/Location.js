@@ -4,12 +4,6 @@ const Location = () => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
 
-  const handleGetLocation = () => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.controller.postMessage("getLocation");
-    }
-  };
-
   useEffect(() => {
     const handleMessage = (event) => {
       if (event.data.type === "location") {
@@ -20,17 +14,30 @@ const Location = () => {
       }
     };
 
-    const handleGeolocationError = (error) => {
-      setError(error.message);
-    };
-
     navigator.serviceWorker.addEventListener("message", handleMessage);
-    navigator.geolocation.getCurrentPosition(() => {}, handleGeolocationError);
 
     return () => {
       navigator.serviceWorker.removeEventListener("message", handleMessage);
     };
   }, []);
+
+  const handleGetLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocation({ latitude, longitude });
+        },
+        (error) => {
+          setError("Unable to retrieve your location");
+          console.error("Error getting location:", error);
+        }
+      );
+    } else {
+      setError("Geolocation is not supported by your browser");
+    }
+  };
+
 
   return (
     <div>
