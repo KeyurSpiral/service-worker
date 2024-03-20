@@ -101,6 +101,7 @@ self.addEventListener("push", function (event) {
 setInterval(() => {
   const envVersion = process.env.REACT_APP_VERSION;
   if (envVersion && envVersion !== VERSION) {
+    console.log("envVersion :> ", envVersion, " ", "VERSION :> ", VERSION)
     // Notify clients of the new version
     self.clients.matchAll().then((clients) => {
       clients.forEach((client) => {
@@ -111,4 +112,4 @@ setInterval(() => {
       });
     });
   }
-}, 5000); // Check for updates every hour (60 * 60 * 1000)
+}, 2 * 60 * 1000); // Check for updates every hour (60 * 60 * 1000)
