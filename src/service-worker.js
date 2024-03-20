@@ -71,7 +71,7 @@ self.addEventListener("push", function (event) {
 
 self.addEventListener("message", (event) => {
   if (event.data === "getLocation") {
-    navigator.geolocation.getCurrentPosition(
+    navigator?.geolocation?.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         self.clients.matchAll().then((clients) => {
