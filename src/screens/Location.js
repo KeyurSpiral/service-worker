@@ -4,8 +4,9 @@ const Location = () => {
   const [location, setLocation] = useState(null);
 
   const handleGetLocation = () => {
+    console.log("navigator", navigator)
     if ("serviceWorker" in navigator) {
-      navigator?.serviceWorker?.controller?.postMessage("getLocation");
+      navigator.serviceWorker.controller.postMessage("getLocation");
     }
   };
 

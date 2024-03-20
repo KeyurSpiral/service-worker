@@ -40,6 +40,7 @@ registerRoute(
 const bgSyncPlugin = new BackgroundSyncPlugin("myQueueName", {
   maxRetentionTime: 24 * 60, // Retry for max of 24 hours (in minutes)
 });
+
 registerRoute(
   "https://jsonplaceholder.typicode.com/posts/1", // Adjust the URL as per your needs
   new NetworkFirst({
@@ -68,10 +69,9 @@ self.addEventListener("push", function (event) {
 });
 
 //handle location access
-
 self.addEventListener("message", (event) => {
   if (event.data === "getLocation") {
-    navigator?.geolocation?.getCurrentPosition(
+    navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         self.clients.matchAll().then((clients) => {
