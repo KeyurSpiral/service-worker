@@ -55,6 +55,33 @@ self.addEventListener("message", (event) => {
   }
 });
 
+// handle location access
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+
+  if (event.data === "getLocation") {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          self.clients.matchAll().then((clients) => {
+            clients.forEach((client) => {
+              client.postMessage({ type: "location", latitude, longitude });
+            });
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported");
+    }
+  }
+});
+
 // handle push notification
 self.addEventListener("push", function (event) {
   const options = {
@@ -66,23 +93,4 @@ self.addEventListener("push", function (event) {
   event.waitUntil(
     self.registration.showNotification("Push Notification", options)
   );
-});
-
-//handle location access
-self.addEventListener("message", (event) => {
-  if (event.data === "getLocation") {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        self.clients.matchAll().then((clients) => {
-          clients.forEach((client) => {
-            client.postMessage({ type: "location", latitude, longitude });
-          });
-        });
-      },
-      (error) => {
-        console.error("Error getting location:", error);
-      }
-    );
-  }
 });

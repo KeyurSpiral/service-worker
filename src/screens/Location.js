@@ -4,13 +4,12 @@ const Location = () => {
   const [location, setLocation] = useState(null);
 
   const handleGetLocation = () => {
-    console.log("navigator", navigator)
+    console.log("navigator", navigator);
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.controller.postMessage("getLocation");
     }
   };
 
-  // Listen for messages from service worker
   useEffect(() => {
     const handleMessage = (event) => {
       if (event.data.type === "location") {
