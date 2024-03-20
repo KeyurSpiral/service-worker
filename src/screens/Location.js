@@ -38,7 +38,6 @@ const Location = () => {
     }
   };
 
-
   return (
     <div>
       <div className="App">
@@ -46,6 +45,8 @@ const Location = () => {
           <div>
             <h1>React Get Location Access Example</h1>
             <button onClick={handleGetLocation}>Get Location</button>
+            <br />
+            <br />
             {location && (
               <div>
                 <h3>Latitude: {location.latitude}</h3>
