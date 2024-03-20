@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 
 const Location = () => {
   const [location, setLocation] = useState(null);
-  const [error, setError] = useState(null);
 
   const handleGetLocation = () => {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.controller.postMessage("getLocation");
-    } else {
-      console.error("Service worker is not available");
+      navigator?.serviceWorker?.controller?.postMessage("getLocation");
     }
   };
 
+  // Listen for messages from service worker
   useEffect(() => {
     const handleMessage = (event) => {
       if (event.data.type === "location") {
@@ -19,19 +17,14 @@ const Location = () => {
           latitude: event.data.latitude,
           longitude: event.data.longitude,
         });
-        setError(null);
-      } else if (event.data.type === "locationError") {
-        setError(event.data.error);
-        setLocation(null);
       }
     };
 
-    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.addEventListener("message", handleMessage);
-      return () => {
-        navigator.serviceWorker.removeEventListener("message", handleMessage);
-      };
-    }
+    navigator.serviceWorker.addEventListener("message", handleMessage);
+
+    return () => {
+      navigator.serviceWorker.removeEventListener("message", handleMessage);
+    };
   }, []);
 
   return (

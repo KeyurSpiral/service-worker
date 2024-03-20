@@ -69,29 +69,20 @@ self.addEventListener("push", function (event) {
 
 //handle location access
 
-self.addEventListener('message', event => {
-  if (event.data === 'getLocation' && 'geolocation' in navigator) {
-    navigator.geolocation.getCurrentPosition(position => {
-      const { latitude, longitude } = position.coords;
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-          client.postMessage({ type: 'location', latitude, longitude });
+self.addEventListener("message", (event) => {
+  if (event.data === "getLocation") {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: "location", latitude, longitude });
+          });
         });
-      });
-    }, error => {
-      console.error('Error getting location:', error);
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-          client.postMessage({ type: 'locationError', error });
-        });
-      });
-    });
-  } else {
-    console.error('Geolocation is not supported or permission is denied');
-    self.clients.matchAll().then(clients => {
-      clients.forEach(client => {
-        client.postMessage({ type: 'locationError', error: 'Geolocation is not supported or permission is denied' });
-      });
-    });
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+      }
+    );
   }
 });
