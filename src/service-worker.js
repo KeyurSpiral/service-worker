@@ -100,8 +100,8 @@ self.addEventListener("push", function (event) {
 // Check for updates based on version in .env
 setInterval(() => {
   const envVersion = process.env.REACT_APP_VERSION;
+  console.log("envVersion :> ", envVersion, " ", "VERSION :> ", VERSION);
   if (envVersion && envVersion !== VERSION) {
-    console.log("envVersion :> ", envVersion, " ", "VERSION :> ", VERSION)
     self.clients.matchAll().then((clients) => {
       clients.forEach((client) => {
         client.postMessage({
