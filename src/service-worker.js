@@ -112,4 +112,4 @@ setInterval(() => {
       });
     });
   }
-}, 2 * 60 * 1000); // Check for updates every hour (60 * 60 * 1000)
+}, 1000); // Check for updates every hour (60 * 60 * 1000)
