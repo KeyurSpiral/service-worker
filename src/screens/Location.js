@@ -17,12 +17,15 @@ const Location = () => {
           latitude: event.data.latitude,
           longitude: event.data.longitude,
         });
-      } else if (event.data.type === "location_error") {
-        setError("Geolocation is not available or permission is denied.");
       }
     };
 
+    const handleGeolocationError = (error) => {
+      setError(error.message);
+    };
+
     navigator.serviceWorker.addEventListener("message", handleMessage);
+    navigator.geolocation.getCurrentPosition(() => {}, handleGeolocationError);
 
     return () => {
       navigator.serviceWorker.removeEventListener("message", handleMessage);
