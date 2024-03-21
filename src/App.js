@@ -17,6 +17,7 @@ function App() {
     const handleServiceWorkerMessage = (event) => {
       if (event.data && event.data.type === "NEW_VERSION_AVAILABLE") {
         const newVersion = event.data.version;
+        console.log(newVersion,"newVersion");
         setNewVersion(newVersion);
       }
     };
