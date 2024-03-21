@@ -117,4 +117,11 @@ setInterval(() => {
     .catch((error) => {
       console.error("Error checking for updates:", error);
     });
-}, 60000); // Check for updates every hour(60 * 60 * 1000)
+}, 60000);
+
+// Listen for skip waiting message from the client
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+}); // Check for updates every hour(60 * 60 * 1000)

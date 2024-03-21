@@ -15,19 +15,16 @@ root.render(
 
 serviceWorkerRegistration.register({
   onUpdate: (registration) => {
-    const newWorker = registration.waiting;
-    if (newWorker) {
-      newWorker.addEventListener("statechange", () => {
-        if (newWorker.state === "installed") {
-          if (
-            window.confirm(
-              "A new version of the app is available. Refresh now?"
-            )
-          ) {
-            window.location.reload();
-          }
+    // When a new version is available, display an alert
+    // and reload the page if the user confirms
+    if (registration && registration.waiting) {
+      const waitingServiceWorker = registration.waiting;
+      if (waitingServiceWorker) {
+        waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
+        if (window.confirm("A new version is available. Reload to update?")) {
+          window.location.reload();
         }
-      });
+      }
     }
   },
 });

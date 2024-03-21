@@ -8,10 +8,6 @@ import Screen3 from "./screens/Screen3";
 import Location from "./screens/Location";
 
 function App() {
-  setInterval(() => {
-    console.log("App")
-  }, 60 * 1000);
-
   return (
     <>
       <Header />
