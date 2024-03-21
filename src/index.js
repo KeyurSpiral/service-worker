@@ -15,15 +15,10 @@ root.render(
 
 serviceWorkerRegistration.register({
   onUpdate: (registration) => {
-    const waitingServiceWorker = registration.waiting;
-    if (waitingServiceWorker) {
-      waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
-      waitingServiceWorker.addEventListener("statechange", (event) => {
-        if (event.target.state === "activated") {
-          alert("Press Ok", window.location.reload());
-        }
-      });
-    }
+    console.log("New version available!");
+    alert(
+      "A new version of the app is available. Please refresh the page to update."
+    );
   },
 });
 

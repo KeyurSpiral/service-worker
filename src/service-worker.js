@@ -103,8 +103,6 @@ setInterval(() => {
     .then((response) => response.json())
     .then((data) => {
       if (data.version !== VERSION) {
-        console.log(data.version, "  ", VERSION);
-        // Notify clients of the new version
         self.clients.matchAll().then((clients) => {
           clients.forEach((client) => {
             client.postMessage({
@@ -118,4 +116,4 @@ setInterval(() => {
     .catch((error) => {
       console.error("Error checking for updates:", error);
     });
-}, 60 * 1000); // Check for updates every hour(60 * 60 * 1000)
+}, 60000); // Check for updates every hour(60 * 60 * 1000)
