@@ -13,6 +13,17 @@ root.render(
   </BrowserRouter>
 );
 
-serviceWorkerRegistration.register();
+serviceWorkerRegistration.register({
+  onUpdate: (registration) => {
+    if (registration && registration.waiting) {
+      registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      // Dispatch a custom event to alert the user of the update
+      const event = new CustomEvent("appUpdateAvailable", {
+        detail: { message: "A new version is available. Reload to update?" },
+      });
+      window.dispatchEvent(event);
+    }
+  },
+});
 
 reportWebVitals();
