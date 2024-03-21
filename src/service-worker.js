@@ -111,7 +111,6 @@ setInterval(() => {
             });
           });
         });
-        console.log("New version available!");
       }
     })
     .catch((error) => {
