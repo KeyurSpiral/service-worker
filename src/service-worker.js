@@ -98,26 +98,40 @@ self.addEventListener("push", function (event) {
 const VERSION = process.env.REACT_APP_VERSION;
 
 // Check for updates
-setInterval(() => {
+function checkForUpdates() {
   fetch("/version.json") // Fetch the version file
     .then((response) => response.json())
     .then((data) => {
       if (data.version !== VERSION) {
-        self.clients.matchAll().then((clients) => {
-          clients.forEach((client) => {
-            client.postMessage({
-              type: "NEW_VERSION_AVAILABLE",
-              version: data.version,
-            });
-          });
-        });
-        console.log("New version available!");
+        broadcastUpdateAvailable(data.version);
       }
     })
     .catch((error) => {
       console.error("Error checking for updates:", error);
     });
-}, 60000);
+}
+
+function broadcastUpdateAvailable(newVersion) {
+  self.clients.matchAll().then((clients) => {
+    clients.forEach((client) => {
+      client.postMessage({
+        type: "NEW_VERSION_AVAILABLE",
+        version: newVersion,
+        message: "A new version is available. Reload to update?",
+      });
+    });
+  });
+}
+
+// Interval for checking updates
+setInterval(checkForUpdates, 60000);
+
+// Listen for skip waiting message from the client
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
 
 // Listen for client updates and dispatch a custom event
 self.addEventListener("message", (event) => {
