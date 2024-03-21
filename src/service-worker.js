@@ -98,7 +98,6 @@ self.addEventListener("push", function (event) {
 const VERSION = process.env.REACT_APP_VERSION;
 
 // Check for updates
-let updateCount = 0; // Initialize update count
 setInterval(() => {
   fetch("/version.json") // Fetch the version file
     .then((response) => response.json())
@@ -112,8 +111,7 @@ setInterval(() => {
             });
           });
         });
-        updateCount++; // Increment update count
-        console.log(`New version available! (Update Count: ${updateCount})`);
+        console.log("New version available!");
       }
     })
     .catch((error) => {
