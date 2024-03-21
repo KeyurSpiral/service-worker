@@ -129,7 +129,7 @@ self.addEventListener("message", (event) => {
       clients.forEach((client) => {
         client.postMessage({
           type: "NEW_VERSION_CONFIRMATION",
-          message: "A new version is available. Reload to update?",
+          message: "Hello! A new version is available. Reload to update?",
         });
         client.postMessage({
           type: "UPDATE_AVAILABLE",
