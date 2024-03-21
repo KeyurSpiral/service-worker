@@ -15,7 +15,7 @@ root.render(
 
 serviceWorkerRegistration.register({
   onUpdate: (registration) => {
-    console.log("New version available!");
+    console.log("New version available!"); 
     alert(
       "A new version of the app is available. Please refresh the page to update."
     );

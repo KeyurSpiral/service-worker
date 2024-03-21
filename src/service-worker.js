@@ -10,8 +10,6 @@ clientsClaim();
 
 precacheAndRoute(self.__WB_MANIFEST);
 
-const VERSION = process.env.REACT_APP_VERSION;
-
 const fileExtensionRegexp = new RegExp("/[^/?]+\\.[^/]+$");
 registerRoute(({ request, url }) => {
   if (request.mode !== "navigate") {
@@ -97,7 +95,10 @@ self.addEventListener("push", function (event) {
   );
 });
 
+const VERSION = process.env.REACT_APP_VERSION;
+
 // Check for updates
+let updateCount = 0; // Initialize update count
 setInterval(() => {
   fetch("/version.json") // Fetch the version file
     .then((response) => response.json())
@@ -111,6 +112,11 @@ setInterval(() => {
             });
           });
         });
+        updateCount++; // Increment update count
+        console.log(`New version available! (Update Count: ${updateCount})`);
+        alert(
+          "A new version of the app is available. Please refresh the page to update."
+        );
       }
     })
     .catch((error) => {
