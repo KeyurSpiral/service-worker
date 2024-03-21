@@ -6,25 +6,50 @@ import Home from "./screens/Home";
 import Push from "./screens/Push";
 import Screen3 from "./screens/Screen3";
 import Location from "./screens/Location";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
-  useEffect(() => {
-    window.addEventListener("appUpdateAvailable", (event) => {
-      const message = event.detail.message;
-      if (window.confirm(message)) {
-        window.location.reload();
-      }
-    });
+  const [oldVersion, setOldVersion] = useState("");
+  const [newVersion, setNewVersion] = useState("");
 
-    return () => {
-      window.removeEventListener("appUpdateAvailable");
+  useEffect(() => {
+    // Function to handle messages from the service worker
+    const handleServiceWorkerMessage = (event) => {
+      if (event.data && event.data.type === "NEW_VERSION_AVAILABLE") {
+        const newVersion = event.data.version;
+        setNewVersion(newVersion);
+      }
     };
+
+    // Add event listener to listen for messages from service worker
+    window.addEventListener("message", handleServiceWorkerMessage);
+
+    // Cleanup function to remove event listener
+    return () => {
+      window.removeEventListener("message", handleServiceWorkerMessage);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Fetch old version from version.json file
+    fetch("/version.json")
+      .then((response) => response.json())
+      .then((data) => {
+        const oldVersion = data.version;
+        setOldVersion(oldVersion);
+      })
+      .catch((error) => {
+        console.error("Error fetching old version:", error);
+      });
   }, []);
 
   return (
     <>
       <Header />
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
+        <h1>Old Version: {oldVersion}</h1>
+        <h1>New Version: {newVersion}</h1>
+      </div>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/push" element={<Push />} />
