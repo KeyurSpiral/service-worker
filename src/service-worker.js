@@ -119,13 +119,6 @@ setInterval(() => {
     });
 }, 60000);
 
-// Listen for skip waiting message from the client
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
-});
-
 // Listen for client updates and dispatch a custom event
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "NEW_VERSION_AVAILABLE") {
