@@ -114,9 +114,6 @@ setInterval(() => {
         });
         updateCount++; // Increment update count
         console.log(`New version available! (Update Count: ${updateCount})`);
-        alert(
-          "A new version of the app is available. Please refresh the page to update."
-        );
       }
     })
     .catch((error) => {

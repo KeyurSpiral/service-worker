@@ -15,10 +15,13 @@ root.render(
 
 serviceWorkerRegistration.register({
   onUpdate: (registration) => {
-    console.log("New version available!"); 
-    alert(
-      "A new version of the app is available. Please refresh the page to update."
+    console.log("New version available!");
+    const answer = window.confirm(
+      "A new version of the app is available. Click OK to refresh."
     );
+    if (answer) {
+      window.location.reload();
+    }
   },
 });
 
