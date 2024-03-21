@@ -6,8 +6,22 @@ import Home from "./screens/Home";
 import Push from "./screens/Push";
 import Screen3 from "./screens/Screen3";
 import Location from "./screens/Location";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    window.addEventListener("appUpdateAvailable", (event) => {
+      const message = event.detail.message;
+      if (window.confirm(message)) {
+        window.location.reload();
+      }
+    });
+
+    return () => {
+      window.removeEventListener("appUpdateAvailable");
+    };
+  }, []);
+
   return (
     <>
       <Header />

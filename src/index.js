@@ -15,17 +15,13 @@ root.render(
 
 serviceWorkerRegistration.register({
   onUpdate: (registration) => {
-    console.log("Service worker update detected.");
     if (registration && registration.waiting) {
-      console.log("Service worker waiting...");
-      const waitingServiceWorker = registration.waiting;
-      if (waitingServiceWorker) {
-        console.log("Service worker waiting found.");
-        waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
-        if (window.confirm("A new version is available. Reload to update?")) {
-          window.location.reload();
-        }
-      }
+      registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      // Dispatch a custom event to alert the user of the update
+      const event = new CustomEvent("appUpdateAvailable", {
+        detail: { message: "A new version is available. Reload to update?" },
+      });
+      window.dispatchEvent(event);
     }
   },
 });

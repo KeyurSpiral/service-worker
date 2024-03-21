@@ -124,4 +124,24 @@ self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
-}); // Check for updates every hour(60 * 60 * 1000)
+});
+
+// Listen for client updates and dispatch a custom event
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "NEW_VERSION_AVAILABLE") {
+    const updateAvailableEvent = new CustomEvent("appUpdateAvailable", {
+      detail: { message: "A new version is available. Reload to update?" },
+    });
+    self.clients.matchAll().then((clients) => {
+      clients.forEach((client) => {
+        client.postMessage({
+          type: "NEW_VERSION_CONFIRMATION",
+          message: "A new version is available. Reload to update?",
+        });
+        client.postMessage({
+          type: "UPDATE_AVAILABLE",
+        });
+      });
+    });
+  }
+});
