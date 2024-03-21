@@ -97,18 +97,25 @@ self.addEventListener("push", function (event) {
   );
 });
 
-// Check for updates based on version in .env
+// Check for updates
 setInterval(() => {
-  const envVersion = process.env.REACT_APP_VERSION;
-  console.log("envVersion :> ", envVersion, " ", "VERSION :> ", VERSION);
-  if (envVersion && envVersion !== VERSION) {
-    self.clients.matchAll().then((clients) => {
-      clients.forEach((client) => {
-        client.postMessage({
-          type: "NEW_VERSION_AVAILABLE",
-          version: envVersion,
+  fetch("/version.json") // Fetch the version file
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.version !== VERSION) {
+        console.log(data.version, "  ", VERSION);
+        // Notify clients of the new version
+        self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({
+              type: "NEW_VERSION_AVAILABLE",
+              version: data.version,
+            });
+          });
         });
-      });
+      }
+    })
+    .catch((error) => {
+      console.error("Error checking for updates:", error);
     });
-  }
-}, 60 * 1000); // Check for updates every hour (60 * 60 * 1000)
+}, 60 * 1000); // Check for updates every hour(60 * 60 * 1000)
