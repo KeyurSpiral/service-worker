@@ -123,7 +123,7 @@ setInterval(() => {
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "NEW_VERSION_AVAILABLE") {
     const updateAvailableEvent = new CustomEvent("appUpdateAvailable", {
-      detail: { message: "A new version is available. Reload to update?" },
+      detail: { message: "Hi! A new version is available. Reload to update?" },
     });
     self.clients.matchAll().then((clients) => {
       clients.forEach((client) => {

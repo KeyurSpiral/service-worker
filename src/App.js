@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 function App() {
   useEffect(() => {
     window.addEventListener("appUpdateAvailable", (event) => {
+      console.log("EVENT APP.JS : ", event);
       const message = event.detail.message;
       if (window.confirm(message)) {
         window.location.reload();
