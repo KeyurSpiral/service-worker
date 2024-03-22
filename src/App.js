@@ -29,7 +29,7 @@ function App() {
   useEffect(() => {
     const oldVersionFromEnv = process.env.REACT_APP_VERSION;
     setOldVersion(oldVersionFromEnv);
- 
+
     fetch("/version.json")
       .then((response) => response.json())
       .then((data) => {
@@ -48,7 +48,12 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/push" element={<Push />} />
         <Route path="/location" element={<Location />} />
-        <Route path="/version" element={<VersionInfo oldVersion={oldVersion} newVersion={newVersion} />} />
+        <Route
+          path="/version"
+          element={
+            <VersionInfo oldVersion={oldVersion} newVersion={newVersion} />
+          }
+        />
       </Routes>
     </>
   );

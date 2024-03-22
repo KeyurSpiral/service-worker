@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const Header = () => {
   return (
     <div>
-      <Navbar expand="lg" className="bg-body-tertiary">
+      <Navbar expand="lg" className="header-main">
         <Container className="header-navigation-link">
           <Link to="/">React-Bootstrap</Link>
           <Link to="/">Home</Link>
