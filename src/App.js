@@ -9,19 +9,41 @@ import { useEffect, useState } from "react";
 import VersionInfo from "./screens/VersionInfo";
 
 function App() {
+
+  const [updateConfirmed, setUpdateConfirmed] = useState(false);
+
   useEffect(() => {
-    window.addEventListener("appUpdateAvailable", (event) => {
-      console.log("EVENT APP.JS : ", event.detail);
+    const listener = (event) => {
       const message = event.detail.message;
-      if (window.confirm(message)) {
+      if (!updateConfirmed && window.confirm(message)) {
         window.location.reload();
       }
-    });
+    };
+
+    window.addEventListener("appUpdateAvailable", listener);
 
     return () => {
-      window.removeEventListener("appUpdateAvailable");
+      window.removeEventListener("appUpdateAvailable", listener);
     };
-  }, []);
+  }, [updateConfirmed]);
+
+  useEffect(() => {
+    const confirmationListener = (event) => {
+      if (event.data && event.data.type === "NEW_VERSION_CONFIRMATION") {
+        const confirmationMessage = event.data.message;
+        if (!updateConfirmed && window.confirm(confirmationMessage)) {
+          setUpdateConfirmed(true);
+          window.location.reload();
+        }
+      }
+    };
+
+    window.addEventListener("message", confirmationListener);
+
+    return () => {
+      window.removeEventListener("message", confirmationListener);
+    };
+  }, [updateConfirmed]);
 
   const [oldVersion, setOldVersion] = useState("");
   const [newVersion, setNewVersion] = useState("");
