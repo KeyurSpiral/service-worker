@@ -37,6 +37,7 @@ function App() {
         } else {
           setTimeout(() => {
             setUpdateConfirmed(false);
+            console.log("DATA", setTimeout("AABBCC", 1000))
           }, 60 * 1000); 
         }
       }
