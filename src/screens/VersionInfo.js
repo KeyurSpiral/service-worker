@@ -1,6 +1,7 @@
 import React from "react";
 
 const VersionInfo = ({ oldVersion, newVersion }) => {
+  console.log("Version Info :", oldVersion, newVersion)
   return (
     <div className="App">
       <header className="App-header">

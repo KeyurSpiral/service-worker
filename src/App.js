@@ -26,10 +26,11 @@ function App() {
   const [oldVersion, setOldVersion] = useState("");
   const [newVersion, setNewVersion] = useState("");
 
+  console.log(process.env.REACT_APP_VERSION, "process.env.REACT_APP_VERSION");
   useEffect(() => {
     const oldVersionFromEnv = process.env.REACT_APP_VERSION;
     setOldVersion(oldVersionFromEnv);
-
+ 
     fetch("/version.json")
       .then((response) => response.json())
       .then((data) => {
