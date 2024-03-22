@@ -34,6 +34,10 @@ function App() {
         if (!updateConfirmed && window.confirm(confirmationMessage)) {
           setUpdateConfirmed(true);
           window.location.reload();
+        } else {
+          setTimeout(() => {
+            setUpdateConfirmed(false);
+          }, 60 * 1000); 
         }
       }
     };
