@@ -4,8 +4,8 @@ const VersionInfo = ({ oldVersion, newVersion }) => {
   return (
     <div className="App">
       <header className="App-header">
-        <p>Old Version: {oldVersion}</p>
-        <p>New Version: {newVersion}</p>
+        <h1>Old Version: {oldVersion}</h1>
+        <h1>New Version: {newVersion}</h1>
       </header>
     </div>
   );

@@ -13,7 +13,7 @@ const Header = () => {
           <Link to="/">Home</Link>
           <Link to="/push">Push Notification</Link>
           <Link to="/location">Location Access</Link>
-          <Link to="/screen-3">Screen 3</Link>
+          <Link to="/version">Version Info</Link>
         </Container>
       </Navbar>
     </div>
