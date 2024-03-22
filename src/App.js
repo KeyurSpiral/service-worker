@@ -31,13 +31,12 @@ function App() {
     const confirmationListener = (event) => {
       if (event.data && event.data.type === "NEW_VERSION_CONFIRMATION") {
         const confirmationMessage = event.data.message;
-        if (!updateConfirmed && window.confirm(confirmationMessage)) {
+        if (!updateConfirmed && window.alert(confirmationMessage)) {
           setUpdateConfirmed(true);
           window.location.reload();
         } else {
           setTimeout(() => {
             setUpdateConfirmed(false);
-            console.log("DATA", setTimeout("AABBCC", 1000))
           }, 60 * 1000); 
         }
       }
